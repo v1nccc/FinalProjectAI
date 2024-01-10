@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Recommendation</title>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+
+    <div class="flex">
+        <div class="flex-1 flex items-center justify-center">
+            <div>
+                <h1 class="text-[#db0808] text-8xl font-bold">Flavor</h1>
+                <h1 class="text-[#db0808] text-8xl font-bold">Fusion</h1>
+            </div>
+        </div>
+        <div class="flex-1 ml-10">
+            <h1 class="text-2xl font-bold mb-4">Input your params</h1>
+            <form action="{{ url_for('submit') }}" method="post" class="max-w-md bg-white p-6 rounded-md shadow-md">
+            <div class="mb-4">
+                <label for="ingredients" class="block text-sm font-medium text-gray-600">Ingredients (e.g., fish, potato):</label>
+                <input type="text" name="ingredients" required
+                       class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div class="mb-4">
+                <label for="min" class="block text-sm font-medium text-gray-600">Min Calories:</label>
+                <input type="number" name="min" required
+                       class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div class="mb-4">
+                <label for="max" class="block text-sm font-medium text-gray-600">Max Calories:</label>
+                <input type="number" name="max" required
+                       class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div class="mb-4">
+                <label for="tags" class="block text-sm font-medium text-gray-600">Favorite Tags (e.g., easy, quick):</label>
+                <input type="text" name="tags" required
+                       class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500">
+            </div>
+
+            <input type="submit" value="Submit" class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 cursor-pointer">
+            </form>
+        </div>
+    </div>
+
+    <h1 class="text-2xl font-bold my-6">Recommendations Based on Your History:</h1>
+
+    <div>
+        {% for entry in result %}
+            <p class="bg-gray-200 p-2 mb-2 rounded-md">{{ entry }}</p>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
