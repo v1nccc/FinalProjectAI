@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 min-h-screen p-6">
+
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-md shadow-md">
+
+        <h1 class="text-3xl font-bold mb-6">Result Page</h1>
+
+        <div class="space-y-4">
+            {% for entry in result %}
+                <p class="bg-gray-200 p-4 rounded-md">{{ entry }}</p>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</body>
+
+</html>
