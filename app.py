@@ -10,7 +10,7 @@ app = Flask(__name__)
 def index():
     r = random.randint(7473)
     result = getRecommendations_UserBased(r, 5)
-    return render_template('index.html', result=result)
+    return render_template('index.html', result=result, user=r)
 
 
 # Route to handle form submission
