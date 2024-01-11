@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="flex-1 ml-10">
-            <h1 class="text-2xl font-bold mb-4">Input your params</h1>
+            <h1 class="text-2xl font-bold mb-4">Input your preferences</h1>
             <form action="{{ url_for('submit') }}" method="post" class="max-w-md bg-white p-6 rounded-md shadow-md">
             <div class="mb-4">
                 <label for="ingredients" class="block text-sm font-medium text-gray-600">Ingredients (e.g., fish, potato):</label>
@@ -39,7 +39,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="tags" class="block text-sm font-medium text-gray-600">Favorite Tags (e.g., easy, quick):</label>
+                <label for="tags" class="block text-sm font-medium text-gray-600">Favorite Tags (e.g., easy, italian):</label>
                 <input type="text" name="tags" required
                        class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500">
             </div>
@@ -52,10 +52,16 @@
     <h1 class="text-2xl font-bold my-6">Recommendations Based on Your History (ID-{{ user}}):</h1>
 
     <div>
-        {% for entry in result %}
-            <p class="bg-gray-200 p-2 mb-2 rounded-md">{{ entry }}</p>
+        {% for rec in result %}
+            <div class="bg-gray-200 p-4 mb-4 rounded-md">
+                <h3 class="font-bold text-lg">Top {{ rec.rank }}: {{ rec.name }}</h3>
+                <p><strong>Recipe ID:</strong> {{ rec.recipe_id }}</p>
+                <p><strong>Ingredients:</strong> {{ rec.ingredients }}</p>
+            </div>
         {% endfor %}
     </div>
+    
+    
 
 </body>
 </html>

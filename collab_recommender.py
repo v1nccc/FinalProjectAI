@@ -2,9 +2,10 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics.pairwise import pairwise_distances
+import ast
 
-interactions = pd.read_csv('interactions_train.csv')
-recipes = pd.read_csv('RAW_recipes.csv')
+interactions = pd.read_csv('FinalProjectAI/interactions_train.csv')
+recipes = pd.read_csv('FinalProjectAI/RAW_recipes.csv')
 
 _all = interactions.drop(['date', 'u', 'i'], axis=1)
 
@@ -79,48 +80,55 @@ item_pred_df.insert(0, 'user_id', list(n_users))
 # The recommendation engine
 
 def getRecommendations_UserBased(user_id, top_n=10):
-    rated = list(df['recipe_id'].loc[df['user_id'] == user_id])
+    rated = set(df['recipe_id'].loc[df['user_id'] == user_id])
 
     _all = user_pred_df.loc[user_pred_df['user_id'] == user_id].copy()
-    _all.drop(user_pred_df[rated], axis=1, inplace=True)
+    _all.drop(columns=rated, inplace=True, errors='ignore')
 
-    _sorted = _all.iloc[:, 1:].sort_values(by=_all.index[0], axis=1, ascending=False)
-    dict_top_n = _sorted.iloc[:, :top_n].to_dict(orient='records')
+    _sorted = _all.iloc[:, 1:].T.nlargest(top_n, _all.index[0])
 
-    i = 1
     result = []
-    for recipe_id in list(dict_top_n[0].keys()):
-        for old_recipe, new_recipe in new_recipeID.items():
-            if recipe_id == new_recipe:
-                name = recipe[recipe['recipe_id'] == old_recipe]['name'].values[0]
-                ingredients = recipe[recipe['recipe_id'] == old_recipe]['ingredients'].values[0]
+    for rank, (predicted_recipe_id, _) in enumerate(_sorted.iterrows(), start=1):
+        original_recipe_id = [orig_id for orig_id, new_id in new_recipeID.items() if new_id == predicted_recipe_id][0]
 
-                result.append(f'Top {i} Original Recipe ID: {old_recipe} - {name}\n Ingredients: {ingredients}\n')
+        recipe_details = recipe.loc[recipe['recipe_id'] == original_recipe_id].iloc[0]
+        name = recipe_details['name']
+        ingredients = ', '.join(ast.literal_eval(recipe_details['ingredients']))
 
-                i += 1
+        recommendation = {
+            'rank': rank,
+            'recipe_id': original_recipe_id,
+            'name': name,
+            'ingredients': ingredients
+        }
+        result.append(recommendation)
 
     return result
 
 
+
 def getRecommendations_ItemBased(user_id, top_n=10):
-    rated = list(df['recipe_id'].loc[df['user_id'] == user_id])
+    rated = set(df.loc[df['user_id'] == user_id, 'recipe_id'])
 
-    _all = item_pred_df.loc[item_pred_df['user_id'] == user_id].copy()
-    _all.drop(columns=rated, inplace=True)
+    user_predictions = item_pred_df.loc[item_pred_df['user_id'] == user_id].copy()
+    user_predictions.drop(columns=rated, inplace=True, errors='ignore')
 
-    _sorted = _all.iloc[:, 1:].sort_values(by=_all.index[0], axis=1, ascending=False)
-    dict_top_n = _sorted.iloc[:, :top_n].to_dict(orient='records')
+    top_predictions = user_predictions.iloc[:, 1:].T.nlargest(top_n, user_predictions.index[0])
 
-    i = 1
     result = []
-    for recipe_id in list(dict_top_n[0].keys()):
-        for old_recipe, new_recipe in new_recipeID.items():
-            if recipe_id == new_recipe:
-                name = recipe[recipe['recipe_id'] == old_recipe]['name'].values[0]
-                ingredients = recipe[recipe['recipe_id'] == old_recipe]['ingredients'].values[0]
+    for rank, (predicted_recipe_id, _) in enumerate(top_predictions.iterrows(), start=1):
+        original_recipe_id = [orig_id for orig_id, new_id in new_recipeID.items() if new_id == predicted_recipe_id][0]
 
-                result.append(f'Top {i} Original Recipe ID: {old_recipe} - {name}\n Ingredients: {ingredients}\n')
+        recipe_details = recipe.loc[recipe['recipe_id'] == original_recipe_id].iloc[0]
+        name = recipe_details['name']
+        ingredients = ', '.join(ast.literal_eval(recipe_details['ingredients']))
 
-                i += 1
+        recommendation = {
+            'rank': rank,
+            'recipe_id': original_recipe_id,
+            'name': name,
+            'ingredients': ingredients
+        }
+        result.append(recommendation)
 
-    return dict_top_n[0]
+    return result

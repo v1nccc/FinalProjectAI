@@ -3,8 +3,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import ast
 
-recipes = pd.read_csv('RAW_recipes.csv')
-interactions = pd.read_csv('interactions_train.csv')
+recipes = pd.read_csv('FinalProjectAI/RAW_recipes.csv')
+interactions = pd.read_csv('FinalProjectAI/interactions_train.csv')
 
 recipes['calories'] = recipes['nutrition'].apply(lambda x: ast.literal_eval(x)[0])
 recipes['ingredients_str'] = recipes['ingredients'].apply(lambda x: ' '.join(ast.literal_eval(x)))
@@ -45,15 +45,26 @@ def recommend_recipes(df, user_input_vector, min_calories, max_calories, favorit
 
 def display_recommendations(recommended_recipes):
     result = []
-    for custom_idx, (idx, recipe) in enumerate(recommended_recipes.iterrows()):
+
+    # Iterate through each recommended recipe
+    for custom_idx, recipe in recommended_recipes.iterrows():
+        # Process ingredients and tags for display
         ingredients = ', '.join(ast.literal_eval(recipe['ingredients']))
         tags = ', '.join(recipe['tags'])
-        entry = f"{custom_idx}: {recipe['name']} (Calories: {recipe['calories']})\n"
-        entry += f"Ingredients: {ingredients}\n"
-        entry += f"Tags: {tags}\n"
-        result.append(entry)
 
+        # Construct a dictionary for each recipe
+        recipe_dict = {
+            'rank': custom_idx + 1,
+            'name': recipe['name'],
+            'calories': recipe['calories'],
+            'ingredients': ingredients,
+            'tags': tags
+        }
+
+        result.append(recipe_dict)
     return result
+
+
 
 
 def inputs(user_ingredients, min_calories, max_calories, favorite_tags):
