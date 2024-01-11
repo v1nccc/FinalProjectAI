@@ -46,13 +46,11 @@ def recommend_recipes(df, user_input_vector, min_calories, max_calories, favorit
 def display_recommendations(recommended_recipes):
     result = []
 
-    # Iterate through each recommended recipe
     for custom_idx, recipe in recommended_recipes.iterrows():
-        # Process ingredients and tags for display
+
         ingredients = ', '.join(ast.literal_eval(recipe['ingredients']))
         tags = ', '.join(recipe['tags'])
 
-        # Construct a dictionary for each recipe
         recipe_dict = {
             'rank': custom_idx + 1,
             'name': recipe['name'],
